@@ -1,6 +1,7 @@
 package com.techzen.techlearn.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.techzen.techlearn.enums.SubmissionStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.Where;
@@ -15,28 +16,29 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Where(clause = "is_deleted = false")
-@Table(name = "tbl_user")
-public class UserEntity extends BaseEntity {
+@Table(name = "tbl_submission")
+public class SubmissionEntity extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(name = "full_name")
-    private String fullName;
+    @Column(name = "link")
+    private String link;
 
-    @Column(name = "age")
-    private Integer age;
+    @Column(name = "status")
+    @Enumerated(EnumType.STRING)
+    private SubmissionStatus status;
 
-    @OneToMany(mappedBy = "user")
-    @JsonIgnore
-    private List<QuestionEntity> questions;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "course_id")
+    private CourseEntity course;
 
-    @OneToMany(mappedBy = "user")
-    @JsonIgnore
-    private List<SubmissionEntity> submissions;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private UserEntity user;
 
-    @ManyToMany(mappedBy = "users")
+    @OneToMany(mappedBy = "submission")
     @JsonIgnore
     private List<AssignmentEntity> assignments;
 
